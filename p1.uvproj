@@ -461,6 +461,26 @@
               <FileType>5</FileType>
               <FilePath>.\timer.h</FilePath>
             </File>
+            <File>
+              <FileName>eventHandler.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\eventHandler.h</FilePath>
+            </File>
+            <File>
+              <FileName>eventHandler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\eventHandler.c</FilePath>
+            </File>
+            <File>
+              <FileName>systemTick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\systemTick.c</FilePath>
+            </File>
+            <File>
+              <FileName>systemTick.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\systemTick.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
