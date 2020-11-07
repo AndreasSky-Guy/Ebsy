@@ -10,7 +10,7 @@
       <TargetName>Target 1</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -458,6 +458,26 @@
               <FileName>timer.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\timer.h</FilePath>
+            </File>
+            <File>
+              <FileName>eventHandler.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\eventHandler.h</FilePath>
+            </File>
+            <File>
+              <FileName>eventHandler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\eventHandler.c</FilePath>
+            </File>
+            <File>
+              <FileName>systemTick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\systemTick.c</FilePath>
+            </File>
+            <File>
+              <FileName>systemTick.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\systemTick.h</FilePath>
             </File>
           </Files>
         </Group>
