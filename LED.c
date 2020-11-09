@@ -345,7 +345,7 @@ void LED_run2(int frequency)
 	}
 }
 
-void LED_PWM(int led, int dutycycle)
+void LED_PWM(uint8_t led, uint8_t dutycycle)
 {
 	if (LPC_TIM0->TC <= dutycycle)
 	{	
@@ -356,6 +356,9 @@ void LED_PWM(int led, int dutycycle)
 		LED_off(led);
 	}
 }
+
+
+
 void LED_run_schmodderd (int frequency)
 	
 {

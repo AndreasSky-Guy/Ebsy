@@ -49,7 +49,10 @@ int main(void)
 	
 	while(1)
 	{
-		processTable[0].func();
+		if (processTable[0].pstatus == ready)
+		{
+			processTable[0].func(0, 50);
+		}
 	}
 }
 

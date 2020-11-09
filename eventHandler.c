@@ -52,16 +52,14 @@
 void Sys_Init()
 {
 	
-	uint32_t (*LEDon)(void);
-	LEDon = &LED_on1;
-	createProcess((*LEDon));
-	
-	
-	
+	//uint32_t (*func)(uint8_t parameter);
+	//func = &LED_PWM_0;
+	createProcess(&LED_PWM);
+
 }
 
 
-pid_t createProcess(uint32_t (*func)(void))
+pid_t createProcess(void (*func)(uint8_t parameter1, uint8_t parameter2))
 {
 	uint8_t processnumber = 0;
 	for (int i = 0; i < NPROCS; i++)
