@@ -3,7 +3,7 @@
 #define INTERVAL_10ms 10
 #define INTERVAL_50ms 50
 #define INTERVAL_100ms 100
-#define NPROCS 4
+#define NPROCS 10
 
 
 typedef struct {
@@ -18,7 +18,9 @@ typedef uint32_t pid_t;
 typedef struct {
 	pid_t id;
 	uint8_t pstatus;
-	void (*func)(uint8_t parameter1, uint8_t parameter2);
+	void (*func)(uint32_t parameter1, uint32_t parameter2);
+	uint32_t parameter1;
+	uint32_t parameter2;
 	} pcb_type;
 
 enum processStatus {
@@ -26,10 +28,12 @@ enum processStatus {
 	running,
 	ready,
 	waiting,
+	init,
 };
 //pcb_type processTable[NPROCS];
 
-pid_t createProcess(void (*func)(uint8_t parameter1, uint8_t parameter2));
+pid_t createProcess(void (*func)(uint32_t parameter1, uint32_t parameter2), uint8_t initstatus);
 void handle(void);
 void Sys_Init(void);
 result_t destroyProcess(pid_t pid);
+void Sys_Task_Scheduler(void);

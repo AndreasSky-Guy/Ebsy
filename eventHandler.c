@@ -49,17 +49,41 @@
 //const uint8_t  NumTasks = sizeof(Tasks) / sizeof(*Tasks);  // Anzahl Tasks
  pcb_type processTable[NPROCS];
 
+
+
 void Sys_Init()
 {
 	
 	//uint32_t (*func)(uint8_t parameter);
 	//func = &LED_PWM_0;
-	createProcess(&LED_PWM);
+	createProcess(&LED_process_init,init);
+	
 
 }
 
 
-pid_t createProcess(void (*func)(uint8_t parameter1, uint8_t parameter2))
+void Sys_Task_Scheduler(void)
+{
+	
+	for (int i = 0; i < NPROCS; i++)
+		{
+
+			if (processTable[i].pstatus == ready)
+			{
+							processTable[i].func(processTable[i].parameter1, processTable[i].parameter2);	
+					
+			}
+			else if (processTable[i].pstatus == init)
+			{
+							processTable[i].func(processTable[i].parameter1, processTable[i].parameter2);	
+							destroyProcess(i);
+					
+			}
+		}
+}
+
+
+pid_t createProcess(void (*func)(uint32_t parameter1, uint32_t parameter2), uint8_t initstatus)
 {
 	uint8_t processnumber = 0;
 	for (int i = 0; i < NPROCS; i++)
@@ -67,12 +91,12 @@ pid_t createProcess(void (*func)(uint8_t parameter1, uint8_t parameter2))
 			if (processTable[i].pstatus == unused)
 			{
 				processnumber=i;
-				continue;							// überprüfen ob er aus der if oder aus der for schleife springt
+				break;							
 			}
 		}
 	pcb_type process;
 	process.id = processnumber;
-	process.pstatus =ready;
+	process.pstatus = initstatus;
 	
 	process.func = func;
 	

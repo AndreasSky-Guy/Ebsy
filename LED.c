@@ -33,9 +33,11 @@
 #include <LPC177x_8x.h>
 #include <stdio.h>
 #include "LED.h"
+#include "eventHandler.h"
 
 /* ----------------- G L O B A L    V A R I A B L E S ------------------ */
 
+extern pcb_type processTable[NPROCS]; 
 
 
 /* ------------  F U N C T I O N   D E F I N I T I O N ----------------- */
@@ -345,7 +347,7 @@ void LED_run2(int frequency)
 	}
 }
 
-void LED_PWM(uint8_t led, uint8_t dutycycle)
+void LED_PWM(uint32_t led, uint32_t dutycycle)
 {
 	if (LPC_TIM0->TC <= dutycycle)
 	{	
@@ -359,19 +361,46 @@ void LED_PWM(uint8_t led, uint8_t dutycycle)
 
 
 
-void LED_run_schmodderd (int frequency)
+void LED_run_smooth (uint32_t frequency, uint32_t unused)
 	
 {
-	static uint8_t LEDcounter = LED0;
-	static uint8_t direction;
+	static uint8_t init = 0;
 	
-	if(direction == 0)
+	static uint8_t LED_ID0 = 0;
+	static uint8_t LED_ID1 = 0;
+	static uint8_t LED_ID2 = 0;
+	static uint8_t LED_ID3 = 0;
+	static uint8_t LED_ID4 = 0;
+	static uint8_t LED_ID5 = 0;
+	static uint8_t LED_ID6 = 0;
+	static uint8_t LED_ID7 = 0;
+	
+	
+	
+	if (init ==0)	
 	{
+		LED_ID0 = createProcess(&LED_PWM, waiting);
+		LED_ID1 = createProcess(&LED_PWM, waiting);
+		LED_ID2 = createProcess(&LED_PWM, waiting);
+		LED_ID3 = createProcess(&LED_PWM, waiting);
+		LED_ID4 = createProcess(&LED_PWM, waiting);
+		LED_ID5 = createProcess(&LED_PWM, waiting);
+		LED_ID6 = createProcess(&LED_PWM, waiting);
+		LED_ID7 = createProcess(&LED_PWM, waiting);
+		init = 1;
+	}
+	processTable[LED_ID0].parameter1=LED0;
+	processTable[LED_ID0].parameter2=50;
+	processTable[LED_ID0].pstatus=ready;
+		
+	static uint8_t LEDcounter = LED0;
+
+	
 		if(LPC_TIM1->TC < frequency)
 		{
 			
 			LED_PWM(LEDcounter,100);
-			LED_PWM(LEDcounter-1,50);
+			LED_PWM(LEDcounter-1,50);		
 			LED_PWM(LEDcounter-2,10);
 								//increment LED
 		}
@@ -383,28 +412,8 @@ void LED_run_schmodderd (int frequency)
 		}
 		
 		if(LEDcounter == LED7)
-			direction = 1;						//change direction
-	}
-	else
-	{
-		if(LPC_TIM1->TC < frequency)
-		{
-			
-			LED_PWM(LEDcounter,100);
-			LED_PWM(LEDcounter+1,50);
-			LED_PWM(LEDcounter+2,10);
-								//decrement LED
-		}
-		else
-		{
-			LED_clear_all();
-			LEDcounter--;	
-			LPC_TIM1->TC = 0;					//reset Timer
-		}
-		
-		if(LEDcounter == LED0)
-			direction = 0;						//change direction
-	}
+			LEDcounter=LED0;						//change direction
+	
 }
 void LED_clear_all(void)
 {
@@ -444,3 +453,11 @@ uint32_t LED_on1()
 	LPC_GPIO0->SET |=(1<<LED1);
 	return 0;
 }
+
+void LED_process_init(uint32_t unused1, uint32_t unused2)
+{
+	createProcess(&LED_run_smooth,ready);
+	
+
+}
+

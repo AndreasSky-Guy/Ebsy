@@ -73,10 +73,11 @@ void LED_run1(int frequency);
 void LED_run2(int frequency);
 void LED_clear1(void);
 void LED_clear2(void);
-void LED_PWM(uint8_t led, uint8_t dutycycle);
-void LED_run_schmodderd (int frequency);
+void LED_PWM(uint32_t led, uint32_t dutycycle);
+void LED_run_smooth (uint32_t frequency, uint32_t unused);
 void LED_clear_all(void);
 uint32_t LED_on1(void);
+void LED_process_init(uint32_t unused1, uint32_t unused2);
 
 #endif  // _LED_
 

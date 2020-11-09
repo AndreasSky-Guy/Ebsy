@@ -49,10 +49,7 @@ int main(void)
 	
 	while(1)
 	{
-		if (processTable[0].pstatus == ready)
-		{
-			processTable[0].func(0, 50);
-		}
+		Sys_Task_Scheduler();
 	}
 }
 
