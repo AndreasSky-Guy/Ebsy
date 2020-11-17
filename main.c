@@ -33,17 +33,15 @@
 #include <LPC177x_8x.h>
 #include "LED.h"
 #include "timer.h"
-#include "eventHandler.h"
-#include "systemTick.h"
+#include "ProcessHandler.h"
+
 
 extern pcb_type processTable[NPROCS];
 
 int main(void)
 {
-	SysTick_Init();
 	Sys_Init();
 	LED_init();
-	
 	timer_init(TIMER0,3000);
 	timer_init(TIMER1,30000);
 	

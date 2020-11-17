@@ -1,4 +1,4 @@
- //////////////////////////////
+//////////////////////////////
  // HEADER FILE  LED.h       //
  //////////////////////////////
 
@@ -7,7 +7,7 @@
  *  Eingebettete Betriebssysteme (EBSy)                                   *                                                                                                  *
  **************************************************************************
  *  PROJECT       P1                                                      *
- *  MODULE        LED.c                                                   *
+ *  MODULE        ProcessHandler.c                                          *
  *  REVISION      1.0                                                     *
  **************************************************************************
  *  PURPOSE:                                                              *
@@ -21,14 +21,13 @@
  *  CHANGE HISTORY:                                                       *
  *   Revision  Date         Author      			Description                 *
  *     1.0    19.10.2020   Müller Dominik 		creation                    *
- *     1.1    16.11.2020   Müller Dominik 		added functions             *
  *                                                                        *
  *                                                                        *
  *************************************************************************/
 
 
-#ifndef _LED_H
-   #define _LED_H
+#ifndef _PROCESSHANDLER_H
+   #define _PROCESSHANDLER_H
 
 // global type definitions
    #include <stdint.h>
@@ -43,18 +42,27 @@
 
 /*  - T y p e s                                                          */
 
+typedef uint32_t result_t;
+typedef uint32_t pid_t;
 
+typedef struct {
+	pid_t id;
+	uint8_t pstatus;
+	void (*func)(uint32_t parameter1, uint32_t parameter2);
+	uint32_t parameter1;
+	uint32_t parameter2;
+	} pcb_type;
 
-/*  - C o n s t a n t s                                                  */
+/*  - C o n s t a n t s  	*/
 
-#define LED0 8
-#define LED1 9
-#define LED2 10
-#define LED3 11
-#define LED4 12
-#define LED5 13
-#define LED6 14
-#define LED7 15
+	#define NPROCS 10
+
+enum processStatus {
+	unused,
+	running,
+	ready,
+	waiting,
+};
 
 /*  - M a c r o s                                                        */
 
@@ -65,16 +73,18 @@
 
 
 /*  - P u b l i c  F u n c t i o n  P r o t o t y p e s                 */
-void LED_setInput(uint8_t LED);
-void LED_setOutput(uint8_t LED);
-void LED_on(uint8_t LED);
-void LED_off(uint8_t LED);
-void LED_init(void);
-void LED_PWM(uint32_t led, uint32_t dutycycle);
-void LED_run_smooth (uint32_t frequency, uint32_t unused);
-void LED_process_init(uint32_t unused1, uint32_t unused2);
 
-#endif  // _LED_
+pid_t createProcess(void (*func)(uint32_t parameter1, uint32_t parameter2), uint8_t initstatus);
+void Sys_Init(void);
+result_t destroyProcess(pid_t pid);
+void Sys_Task_Scheduler(void);
+
+#endif  //_PROCESSHANDLER_H
+
+
+
+
+
 
 
 
