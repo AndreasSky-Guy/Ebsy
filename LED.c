@@ -38,6 +38,7 @@
 /* ----------------- G L O B A L    V A R I A B L E S ------------------ */
 
 extern pcb_type processTable[NPROCS]; 
+extern uint8_t current_task_id;
 
 
 /* ------------  F U N C T I O N   D E F I N I T I O N ----------------- */
@@ -349,11 +350,11 @@ void LED_run2(int frequency)
 
 void LED_PWM(uint32_t led, uint32_t dutycycle)
 {
-	if (LPC_TIM0->TC <= dutycycle)
+	if (LPC_TIM0->TC < dutycycle)
 	{	
 		LED_on(led);
 	}
-	else if (LPC_TIM0->TC >= dutycycle)
+	else if (LPC_TIM0->TC > dutycycle)
 	{
 		LED_off(led);
 	}
@@ -364,6 +365,7 @@ void LED_PWM(uint32_t led, uint32_t dutycycle)
 void LED_run_smooth (uint32_t frequency, uint32_t unused)
 	
 {
+	frequency /=2;
 	static uint8_t init = 0;
 	
 	static uint8_t LED_ID0 = 0;
@@ -377,14 +379,14 @@ void LED_run_smooth (uint32_t frequency, uint32_t unused)
 		
 	if (init ==0)	
 	{
-		LED_ID0 = createProcess(&LED_PWM, waiting);
-		LED_ID1 = createProcess(&LED_PWM, waiting);
-		LED_ID2 = createProcess(&LED_PWM, waiting);
-		LED_ID3 = createProcess(&LED_PWM, waiting);
-		LED_ID4 = createProcess(&LED_PWM, waiting);
-		LED_ID5 = createProcess(&LED_PWM, waiting);
-		LED_ID6 = createProcess(&LED_PWM, waiting);
-		LED_ID7 = createProcess(&LED_PWM, waiting);
+		LED_ID0 = createProcess(&LED_PWM, ready);
+		LED_ID1 = createProcess(&LED_PWM, ready);
+		LED_ID2 = createProcess(&LED_PWM, ready);
+		LED_ID3 = createProcess(&LED_PWM, ready);
+		LED_ID4 = createProcess(&LED_PWM, ready);
+		LED_ID5 = createProcess(&LED_PWM, ready);
+		LED_ID6 = createProcess(&LED_PWM, ready);
+		LED_ID7 = createProcess(&LED_PWM, ready);
 		
 		processTable[LED_ID0].parameter1=LED0;
 		processTable[LED_ID1].parameter1=LED1;
@@ -394,6 +396,15 @@ void LED_run_smooth (uint32_t frequency, uint32_t unused)
 		processTable[LED_ID5].parameter1=LED5;
 		processTable[LED_ID6].parameter1=LED6;
 		processTable[LED_ID7].parameter1=LED7;
+		
+		processTable[LED_ID0].parameter2=0;	
+		processTable[LED_ID1].parameter2=0;
+		processTable[LED_ID2].parameter2=0;
+		processTable[LED_ID3].parameter2=0;
+		processTable[LED_ID4].parameter2=0;
+		processTable[LED_ID5].parameter2=0;
+		processTable[LED_ID6].parameter2=0;
+		processTable[LED_ID7].parameter2=0;
 				
 		init = 1;
 	}
@@ -401,54 +412,56 @@ void LED_run_smooth (uint32_t frequency, uint32_t unused)
 	static uint8_t LEDcounter = LED0;
 	
 	uint8_t dif=LED0-LED_ID0;
+	static uint8_t timing_switch = 0;
 
-		if(LPC_TIM1->TC < frequency)
+		if(LPC_TIM1->TC > frequency && timing_switch ==0)
 		{
-			if (LEDcounter==0)
+			timing_switch =1;
+			if (LEDcounter==LED0)
 			{
 				processTable[LED_ID0].parameter2=100;
-				processTable[LED_ID0].pstatus=ready;
+
 				processTable[LED_ID7].parameter2=50;
-				processTable[LED_ID7].pstatus=ready;
+
 				processTable[LED_ID6].parameter2=10;
-				processTable[LED_ID6].pstatus=ready;
-				processTable[LED_ID5].pstatus=waiting;
+
+				processTable[LED_ID5].parameter2=0;
 			}
-			else if (LEDcounter==1)
+			else if (LEDcounter==LED1)
 			{
 				processTable[LED_ID1].parameter2=100;
-				processTable[LED_ID1].pstatus=ready;
+
 				processTable[LED_ID0].parameter2=50;
-				processTable[LED_ID0].pstatus=ready;
+
 				processTable[LED_ID7].parameter2=10;
-				processTable[LED_ID7].pstatus=ready;
-				processTable[LED_ID6].pstatus=waiting;
+
+				processTable[LED_ID6].parameter2=0;
 			}
-			else if (LEDcounter==2)
+			else if (LEDcounter==LED2)
 			{
 				processTable[LED_ID2].parameter2=100;
-				processTable[LED_ID2].pstatus=ready;
+
 				processTable[LED_ID1].parameter2=50;
-				processTable[LED_ID1].pstatus=ready;
+
 				processTable[LED_ID0].parameter2=10;
-				processTable[LED_ID0].pstatus=ready;
-				processTable[LED_ID7].pstatus=waiting;
+
+				processTable[LED_ID7].parameter2=0;
 			}
 			
 			else
 			{
-				processTable[LEDcounter+dif].parameter2=100;
-				processTable[LEDcounter+dif].pstatus=ready;
-				processTable[LEDcounter+dif-1].parameter2=50;
-				processTable[LEDcounter+dif-1].pstatus=ready;
-				processTable[LEDcounter+dif-2].parameter2=10;
-				processTable[LEDcounter+dif-2].pstatus=ready;
-				processTable[LEDcounter+dif-3].pstatus=waiting;
+				processTable[LEDcounter-dif].parameter2=100;
+
+				processTable[LEDcounter-dif-1].parameter2=50;
+
+				processTable[LEDcounter-dif-2].parameter2=10;
+
+				processTable[LEDcounter-dif-3].parameter2=0;
 			}
 		}
-		else
+		else if (LPC_TIM1->TC > frequency && timing_switch ==1)
 		{
-			
+			timing_switch = 0;
 			LEDcounter++;
 			LPC_TIM1->TC = 0;
 			if(LEDcounter == LED7+1)
@@ -501,8 +514,9 @@ uint32_t LED_on1()
 
 void LED_process_init(uint32_t unused1, uint32_t unused2)
 {
-	createProcess(&LED_run_smooth,ready);
-	
+	destroyProcess(current_task_id);
+	uint8_t run_id = createProcess(&LED_run_smooth,ready);
+	processTable[run_id].parameter1 = 500;
 
 }
 

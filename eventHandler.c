@@ -48,6 +48,7 @@
 //static uint8_t  TaskIdx = 0;       // Aktueller Task („Index“)
 //const uint8_t  NumTasks = sizeof(Tasks) / sizeof(*Tasks);  // Anzahl Tasks
  pcb_type processTable[NPROCS];
+ uint8_t current_task_id = 0;
 
 
 
@@ -56,7 +57,7 @@ void Sys_Init()
 	
 	//uint32_t (*func)(uint8_t parameter);
 	//func = &LED_PWM_0;
-	createProcess(&LED_process_init,init);
+	createProcess(&LED_process_init,ready);
 	
 
 }
@@ -65,20 +66,15 @@ void Sys_Init()
 void Sys_Task_Scheduler(void)
 {
 	
-	for (int i = 0; i < NPROCS; i++)
+	for (current_task_id = 0; current_task_id < NPROCS; current_task_id++)
 		{
 
-			if (processTable[i].pstatus == ready)
+			if (processTable[current_task_id].pstatus == ready)
 			{
-							processTable[i].func(processTable[i].parameter1, processTable[i].parameter2);	
+							processTable[current_task_id].func(processTable[current_task_id].parameter1, processTable[current_task_id].parameter2);	
 					
 			}
-			else if (processTable[i].pstatus == init)
-			{
-							processTable[i].func(processTable[i].parameter1, processTable[i].parameter2);	
-							destroyProcess(i);
-					
-			}
+		
 		}
 }
 

@@ -28,7 +28,6 @@ enum processStatus {
 	running,
 	ready,
 	waiting,
-	init,
 };
 //pcb_type processTable[NPROCS];
 
