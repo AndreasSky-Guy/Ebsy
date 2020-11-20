@@ -70,9 +70,9 @@ void LED_setOutput(uint8_t LED);
 void LED_on(uint8_t LED);
 void LED_off(uint8_t LED);
 void LED_init(void);
-void LED_PWM(uint32_t led, uint32_t dutycycle);
-void LED_run_smooth (uint32_t frequency, uint32_t unused);
-void LED_process_init(uint32_t unused1, uint32_t unused2);
+void LED_PWM(void);
+void LED_run_smooth (void);
+void LED_process_init(void);
 
 #endif  // _LED_
 

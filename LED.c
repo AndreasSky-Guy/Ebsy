@@ -207,9 +207,12 @@ void LED_off(uint8_t LED)
  *      0        26.10.2020    Müller Dominik     creation                    *
  *                                                                            *
  ******************************************************************************/
-void LED_PWM(uint32_t led, uint32_t dutycycle)
+void LED_PWM(void)
 {
-	if (LPC_TIM0->TC < dutycycle)
+	uint8_t led = processTable[current_task_id].parameter1;
+	uint8_t dutycycle = processTable[current_task_id].parameter2;
+	
+		if (LPC_TIM0->TC < dutycycle)
 	{	
 		LED_on(led);
 	}
@@ -243,9 +246,11 @@ void LED_PWM(uint32_t led, uint32_t dutycycle)
  *                                                                            *
  ******************************************************************************/
 
-void LED_run_smooth (uint32_t frequency, uint32_t unused)
+void LED_run_smooth (void)
 	
 {
+	uint32_t frequency = processTable[current_task_id].parameter1;
+	
 	frequency /=2;
 	static uint8_t init = 0;
 	static uint8_t LED_ID0 = 0;
@@ -362,7 +367,7 @@ void LED_run_smooth (uint32_t frequency, uint32_t unused)
  *                                                                            *
  ******************************************************************************/
 
-void LED_process_init(uint32_t unused1, uint32_t unused2)
+void LED_process_init(void)
 {
 	destroyProcess(current_task_id);
 	uint8_t run_id = createProcess(&LED_run_smooth,ready);

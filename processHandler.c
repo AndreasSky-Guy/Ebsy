@@ -93,7 +93,7 @@ void Sys_Task_Scheduler(void)
 	{
 		if (processTable[current_task_id].pstatus == ready)
 		{
-			processTable[current_task_id].func(processTable[current_task_id].parameter1, processTable[current_task_id].parameter2);	
+			processTable[current_task_id].func();	
 		}
 	}
 }
@@ -118,7 +118,7 @@ void Sys_Task_Scheduler(void)
  *                                                                            *
  ******************************************************************************/
 
-pid_t createProcess(void (*func)(uint32_t parameter1, uint32_t parameter2), uint8_t initstatus)
+pid_t createProcess(void (*func)(void), uint8_t initstatus)
 {
 	uint8_t processnumber = 0;
 	for (int i = 0; i < NPROCS; i++)

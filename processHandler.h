@@ -48,7 +48,7 @@ typedef uint32_t pid_t;
 typedef struct {
 	pid_t id;
 	uint8_t pstatus;
-	void (*func)(uint32_t parameter1, uint32_t parameter2);
+	void (*func)(void);
 	uint32_t parameter1;
 	uint32_t parameter2;
 	} pcb_type;
@@ -74,7 +74,7 @@ enum processStatus {
 
 /*  - P u b l i c  F u n c t i o n  P r o t o t y p e s                 */
 
-pid_t createProcess(void (*func)(uint32_t parameter1, uint32_t parameter2), uint8_t initstatus);
+pid_t createProcess(void (*func)(void), uint8_t initstatus);
 void Sys_Init(void);
 result_t destroyProcess(pid_t pid);
 void Sys_Task_Scheduler(void);
