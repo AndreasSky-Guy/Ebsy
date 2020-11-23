@@ -51,6 +51,7 @@ typedef struct {
 	void (*func)(void);
 	uint32_t parameter1;
 	uint32_t parameter2;
+	uintptr_t sp;
 	} pcb_type;
 
 /*  - C o n s t a n t s  	*/
@@ -78,6 +79,8 @@ pid_t createProcess(void (*func)(void), uint8_t initstatus);
 void Sys_Init(void);
 result_t destroyProcess(pid_t pid);
 void Sys_Task_Scheduler(void);
+void yield (void);
+void switch_context(void);
 
 #endif  //_PROCESSHANDLER_H
 

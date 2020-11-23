@@ -38,6 +38,8 @@
 /* ----------------- G L O B A L    V A R I A B L E S ------------------ */
 pcb_type processTable[NPROCS];
 uint8_t current_task_id = 0;
+uint32_t stack [NPROCS][32];
+
 
 /* ------------  F U N C T I O N   D E F I N I T I O N ----------------- */
 
@@ -129,6 +131,10 @@ pid_t createProcess(void (*func)(void), uint8_t initstatus)
 				break;							
 			}
 		}
+	processTable[processnumber].sp = (uintptr_t)&(stack[processnumber][31])-9*4;
+	stack[processnumber][31] = (uintptr_t)func;
+		
+		
 	pcb_type process;
 	process.id = processnumber;
 	process.pstatus = initstatus;
@@ -168,6 +174,22 @@ result_t destroyProcess(pid_t pid)
 	
 	
 	return 0;
+}
+
+
+void yield (void)
+{
+// Rücksprungadresse LR sichern
+// Kontext von laufendem Prozess sichern
+// nächsten Prozess auswählen
+// sich dem Kontext vom nächsten Prozess wiederherstellen
+// nächsten Prozess fortsetzen
+
+}
+void switch_context(void)
+{
+// Wechseln von context
+	
 }
 
 

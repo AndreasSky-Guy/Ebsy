@@ -374,3 +374,55 @@ void LED_process_init(void)
 	processTable[run_id].parameter1 = 500;
 }
 
+void LED_run1(void)
+{
+while(1)
+	{
+		for (int i = 0; i<4; i++)
+			{
+				if (i != 0)
+				{
+					LED_off(LED0+i-1);
+					LED_on(LED0+i);
+				}
+				else
+				{
+					LED_on(LED0);
+					LED_off(LED3);
+				}
+			yield();
+			}
+		}
+}
+void LED_run2(void)
+{
+while(1)
+	{
+		for (int i = 0; i<4; i++)
+			{
+				if (i != 0)
+				{
+					LED_off(LED4+i-1);
+					LED_on(LED4+i);
+				}
+				else
+				{
+					LED_on(LED4);
+					LED_off(LED7);
+				}
+			yield();
+			}
+		}
+}
+
+void LED_wait(void)
+{
+	while (LPC_TIM1->TC < 500)
+	{
+	}
+	LPC_TIM1->TC = 0;
+	yield();
+}
+
+
+

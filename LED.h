@@ -73,6 +73,9 @@ void LED_init(void);
 void LED_PWM(void);
 void LED_run_smooth (void);
 void LED_process_init(void);
+void LED_run1(void);
+void LED_run2(void);
+void LED_wait(void);
 
 #endif  // _LED_
 
