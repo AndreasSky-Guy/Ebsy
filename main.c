@@ -45,6 +45,9 @@ int main(void)
 	timer_init(TIMER0,3000);
 	timer_init(TIMER1,30000);
 	
+	//create process LED lauf1
+	//create process warte
+	//create process LED lauf2
 	while(1)
 	{
 		Sys_Task_Scheduler();

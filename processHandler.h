@@ -56,7 +56,7 @@ typedef struct {
 
 /*  - C o n s t a n t s  	*/
 
-	#define NPROCS 10
+	#define NPROCS 3
 
 enum processStatus {
 	unused,
@@ -80,7 +80,8 @@ void Sys_Init(void);
 result_t destroyProcess(pid_t pid);
 void Sys_Task_Scheduler(void);
 void yield (void);
-extern void switchContext(uintptr_t oldstack, uintptr_t newstack);
+extern void switch_context(uintptr_t oldstack, uintptr_t newstack);
+extern void first_context(uintptr_t stack);
 
 
 #endif  //_PROCESSHANDLER_H

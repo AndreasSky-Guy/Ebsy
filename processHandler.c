@@ -135,6 +135,7 @@ pid_t createProcess(void (*func)(void), uint8_t initstatus)
 		}
 	processTable[processnumber].sp = (uintptr_t)&(stack[processnumber][31])-9*4;
 	stack[processnumber][31] = (uintptr_t)func;
+	first_context(stack[processnumber][processTable[processnumber].sp]);
 		
 		
 	pcb_type process;
@@ -186,13 +187,19 @@ void yield (void)
 // nächsten Prozess auswählen
 // sich dem Kontext vom nächsten Prozess wiederherstellen
 // nächsten Prozess fortsetzen
-	switchContext(1,2);
 	
 	static int processcounter = 0;
-    processcounter++;
-    if (processcounter == NPROCS)
-            processcounter = 0
-    switch_context(stack[old_stack][processTable[old_stack].sp], stack[new_stack][processTable[new_stack].sp])
+	processTable[processcounter].pstatus = waiting;
+	
+	uint8_t old_stack = processcounter;
+  processcounter++;
+  if (processcounter == NPROCS)
+		processcounter = 0;
+	uint8_t new_stack = processcounter;
+		
+  switch_context(stack[old_stack][processTable[old_stack].sp], stack[new_stack][processTable[new_stack].sp]);
+			
+	processTable[processcounter].pstatus = running;
 	
 	
 }

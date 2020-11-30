@@ -417,11 +417,16 @@ while(1)
 
 void LED_wait(void)
 {
-	while (LPC_TIM1->TC < 500)
+	while(1)
 	{
+		LPC_TIM1->TC = 0;
+		while (LPC_TIM1->TC < 500)
+		{
+		}
+		yield();
 	}
-	LPC_TIM1->TC = 0;
-	yield();
+	
+	
 }
 
 
