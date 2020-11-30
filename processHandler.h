@@ -80,7 +80,8 @@ void Sys_Init(void);
 result_t destroyProcess(pid_t pid);
 void Sys_Task_Scheduler(void);
 void yield (void);
-void switch_context(void);
+extern void switchContext(uintptr_t oldstack, uintptr_t newstack);
+
 
 #endif  //_PROCESSHANDLER_H
 

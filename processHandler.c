@@ -23,6 +23,7 @@
  *     1.0    02.11.2020   Müller Dominik     creation                    *
  *     1.1    16.11.2020   Müller Dominik     changes     		            *
  *     1.2    17.11.2020   Andreas Vieracker  recomment                   *
+ *		 2.0		30.11.2020   Andreas Vieracker 	rework											*
  *                                                                        *
  *************************************************************************/
 
@@ -34,6 +35,7 @@
 #include <LPC177x_8x.h>
 #include "ProcessHandler.h"
 #include "LED.h"
+
 
 /* ----------------- G L O B A L    V A R I A B L E S ------------------ */
 pcb_type processTable[NPROCS];
@@ -184,12 +186,16 @@ void yield (void)
 // nächsten Prozess auswählen
 // sich dem Kontext vom nächsten Prozess wiederherstellen
 // nächsten Prozess fortsetzen
-
-}
-void switch_context(void)
-{
-// Wechseln von context
+	switchContext(1,2);
+	
+	static int processcounter = 0;
+    processcounter++;
+    if (processcounter == NPROCS)
+            processcounter = 0
+    switch_context(stack[old_stack][processTable[old_stack].sp], stack[new_stack][processTable[new_stack].sp])
+	
 	
 }
+
 
 
