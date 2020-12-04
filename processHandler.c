@@ -133,14 +133,15 @@ pid_t createProcess(void (*func)(void), uint8_t initstatus)
 				break;							
 			}
 		}
-	processTable[processnumber].sp = (uintptr_t)&(stack[processnumber][31])-9*4;
+	uintptr_t stackpointer = (uintptr_t)&(stack[processnumber][31])-9*4;
 	stack[processnumber][31] = (uintptr_t)func;
-	first_context(stack[processnumber][processTable[processnumber].sp]);
+	
 		
 		
 	pcb_type process;
 	process.id = processnumber;
 	process.pstatus = initstatus;
+	process.sp = stackpointer; 
 	process.func = func;
 	processTable[processnumber] = process;
 	return process.id;
@@ -187,22 +188,32 @@ void yield (void)
 // nächsten Prozess auswählen
 // sich dem Kontext vom nächsten Prozess wiederherstellen
 // nächsten Prozess fortsetzen
-	
 	static int processcounter = 0;
-	processTable[processcounter].pstatus = waiting;
+	//__return_address()
+	save_context(&processTable[processcounter].sp);
 	
-	uint8_t old_stack = processcounter;
-  processcounter++;
-  if (processcounter == NPROCS)
+	processcounter++;
+	if (processcounter == NPROCS)
 		processcounter = 0;
-	uint8_t new_stack = processcounter;
+
+	load_context(&processTable[processcounter].sp);
 		
-  switch_context(stack[old_stack][processTable[old_stack].sp], stack[new_stack][processTable[new_stack].sp]);
-			
-	processTable[processcounter].pstatus = running;
+	//if(processTable[processcounter].pstatus == ready)
+	//{
+	//	processTable[processcounter].pstatus = running;
+	//	first_context(processTable[new_stack].sp);
+	//}
 	
+  //switch_context(&processTable[old_stack].sp, &processTable[new_stack].sp, lrReg);
 	
 }
+
+void HardFault_Handler(void)
+{
+	//kaputt
+	while(1);
+}
+
 
 
 

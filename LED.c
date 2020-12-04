@@ -376,7 +376,7 @@ void LED_process_init(void)
 
 void LED_run1(void)
 {
-while(1)
+	while(1)
 	{
 		for (int i = 0; i<4; i++)
 			{
@@ -396,7 +396,7 @@ while(1)
 }
 void LED_run2(void)
 {
-while(1)
+	while(1)
 	{
 		for (int i = 0; i<4; i++)
 			{
@@ -420,7 +420,7 @@ void LED_wait(void)
 	while(1)
 	{
 		LPC_TIM1->TC = 0;
-		while (LPC_TIM1->TC < 500)
+		//while (LPC_TIM1->TC < 500)
 		{
 		}
 		yield();

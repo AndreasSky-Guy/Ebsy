@@ -31,6 +31,7 @@
 
 // global type definitions
    #include <stdint.h>
+	 #include <LPC177x_8x.h>
 
 
 
@@ -80,8 +81,11 @@ void Sys_Init(void);
 result_t destroyProcess(pid_t pid);
 void Sys_Task_Scheduler(void);
 void yield (void);
-extern void switch_context(uintptr_t oldstack, uintptr_t newstack);
-extern void first_context(uintptr_t stack);
+//extern void switch_context(uintptr_t *oldstack, uintptr_t *newstack, uint32_t lrReg);
+extern void save_context(uintptr_t *stack);
+extern void load_context(uintptr_t *stack);
+extern void first_context(uintptr_t *stack);
+void HardFault_Handler(void);
 
 
 #endif  //_PROCESSHANDLER_H

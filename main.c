@@ -40,17 +40,18 @@ extern pcb_type processTable[NPROCS];
 
 int main(void)
 {
-	Sys_Init();
+	//Sys_Init();
 	LED_init();
 	timer_init(TIMER0,3000);
 	timer_init(TIMER1,30000);
 	
-	//create process LED lauf1
-	//create process warte
-	//create process LED lauf2
+	createProcess(&LED_run1, ready);
+	createProcess(&LED_wait, ready);
+	createProcess(&LED_run2, ready);
+	first_context(&processTable[0].sp);
 	while(1)
 	{
-		Sys_Task_Scheduler();
+		
 	}
 }
 
