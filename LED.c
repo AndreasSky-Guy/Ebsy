@@ -187,169 +187,13 @@ void LED_off(uint8_t LED)
 	LPC_GPIO0->CLR |=(1<<LED);
 }
 
-/*  FUNCTION <LED_PWM>
+
+/*  FUNCTION <LED_run1>
 
  ******************************************************************************
  *  PURPOSE:                                                                  *
- *    Activating LEDs with an Dudyclycle given by parameters								  *
- *                                                                            *
- ******************************************************************************
- *  PARAMETER:                                                                *
- *   LED, dutyclycle                                                          *
- *                                                                            *
- ******************************************************************************
- *  RETURN VALUE                                                              *
- *      none                                                                  *
- *                                                                            *
- ******************************************************************************
- *  CHANGE HISTORY:                                                           *
- *   Revision   Date          Author      			Description                   *
- *      0        26.10.2020    Müller Dominik     creation                    *
- *                                                                            *
- ******************************************************************************/
-void LED_PWM(void)
-{
-	uint8_t led = processTable[current_task_id].parameter1;
-	uint8_t dutycycle = processTable[current_task_id].parameter2;
-	
-		if (LPC_TIM0->TC < dutycycle)
-	{	
-		LED_on(led);
-	}
-	else if (LPC_TIM0->TC > dutycycle)
-	{
-		LED_off(led);
-	}
-}
-
-/*  FUNCTION <LED_run_smooth>
-
- ******************************************************************************
- *  PURPOSE:                                                                  *
- *    creates processes for all LEDs and controlls the dutyclycle for each 		*
- *   one to create a smooth running light																			* 
- *                                                                            *
- ******************************************************************************
- *  PARAMETER:                                                                *
- *   frequency			                                                          *
- *                                                                            *
- ******************************************************************************
- *  RETURN VALUE                                                              *
- *      none                                                                  *
- *                                                                            *
- ******************************************************************************
- *  CHANGE HISTORY:                                                           *
- *   Revision   Date          Author      			Description                   *
- *      0       01.11.2020    Andreas Vieracker creation                      *
- *      1       09.11.2020    Andreas Vieracker revision                      *
- *      2       16.11.2020    Dominik Müller    revision                      *
- *                                                                            *
- ******************************************************************************/
-
-void LED_run_smooth (void)
-	
-{
-	uint32_t frequency = processTable[current_task_id].parameter1;
-	
-	frequency /=2;
-	static uint8_t init = 0;
-	static uint8_t LED_ID0 = 0;
-	static uint8_t LED_ID1 = 0;
-	static uint8_t LED_ID2 = 0;
-	static uint8_t LED_ID3 = 0;
-	static uint8_t LED_ID4 = 0;
-	static uint8_t LED_ID5 = 0;
-	static uint8_t LED_ID6 = 0;
-	static uint8_t LED_ID7 = 0;
-	
-	static uint8_t LEDcounter = LED0;
-	static uint8_t timing_switch = 0;	
-	
-	if (init ==0)	//for initial start to create processes, changed in next version
-	{
-		LED_ID0 = createProcess(&LED_PWM, ready);
-		LED_ID1 = createProcess(&LED_PWM, ready);
-		LED_ID2 = createProcess(&LED_PWM, ready);
-		LED_ID3 = createProcess(&LED_PWM, ready);
-		LED_ID4 = createProcess(&LED_PWM, ready);
-		LED_ID5 = createProcess(&LED_PWM, ready);
-		LED_ID6 = createProcess(&LED_PWM, ready);
-		LED_ID7 = createProcess(&LED_PWM, ready);
-		
-		processTable[LED_ID0].parameter1=LED0;
-		processTable[LED_ID1].parameter1=LED1;
-		processTable[LED_ID2].parameter1=LED2;
-		processTable[LED_ID3].parameter1=LED3;
-		processTable[LED_ID4].parameter1=LED4;
-		processTable[LED_ID5].parameter1=LED5;
-		processTable[LED_ID6].parameter1=LED6;
-		processTable[LED_ID7].parameter1=LED7;
-		
-		processTable[LED_ID0].parameter2=0;	
-		processTable[LED_ID1].parameter2=0;
-		processTable[LED_ID2].parameter2=0;
-		processTable[LED_ID3].parameter2=0;
-		processTable[LED_ID4].parameter2=0;
-		processTable[LED_ID5].parameter2=0;
-		processTable[LED_ID6].parameter2=0;
-		processTable[LED_ID7].parameter2=0;
-				
-		init = 1;
-	}
-		
-	uint8_t dif=LED0-LED_ID0;
-	
-		if(LPC_TIM1->TC > frequency && timing_switch ==0)
-		{
-			timing_switch =1;
-			if (LEDcounter==LED0)			//switching between diffrent cases of activ LEDs
-			{
-				processTable[LED_ID0].parameter2=100;
-				processTable[LED_ID7].parameter2=50;
-				processTable[LED_ID6].parameter2=10;
-				processTable[LED_ID5].parameter2=0;
-			}
-			else if (LEDcounter==LED1)
-			{
-				processTable[LED_ID1].parameter2=100;
-				processTable[LED_ID0].parameter2=50;
-				processTable[LED_ID7].parameter2=10;
-				processTable[LED_ID6].parameter2=0;
-			}
-			else if (LEDcounter==LED2)
-			{
-				processTable[LED_ID2].parameter2=100;
-				processTable[LED_ID1].parameter2=50;
-				processTable[LED_ID0].parameter2=10;
-				processTable[LED_ID7].parameter2=0;
-			}
-			else
-			{
-				processTable[LEDcounter-dif].parameter2=100;
-				processTable[LEDcounter-dif-1].parameter2=50;
-				processTable[LEDcounter-dif-2].parameter2=10;
-				processTable[LEDcounter-dif-3].parameter2=0;
-			}
-		}
-		else if (LPC_TIM1->TC > frequency && timing_switch ==1)
-		{
-			timing_switch = 0;
-			LEDcounter++;
-			LPC_TIM1->TC = 0;
-			
-			if(LEDcounter == LED7+1)
-			{
-				LEDcounter=LED0;						
-			}
-		}
-}
-
-/*  FUNCTION <LED_process_init>
-
- ******************************************************************************
- *  PURPOSE:                                                                  *
- *    creates the initial processes of the LED function and destroys the own 	* 
- *    process																																	*
+ *    running LED 0 to 3 in a while loop executes yield on end of loop		  	* 
+ *    																																				*
  *                                                                            *
  ******************************************************************************
  *  PARAMETER:                                                                *
@@ -366,14 +210,6 @@ void LED_run_smooth (void)
  *      1       16.11.2020    Dominik Müller    revision                      *
  *                                                                            *
  ******************************************************************************/
-
-void LED_process_init(void)
-{
-	destroyProcess(current_task_id);
-	uint8_t run_id = createProcess(&LED_run_smooth,ready);
-	processTable[run_id].parameter1 = 500;
-}
-
 void LED_run1(void)
 {
 	while(1)
@@ -394,6 +230,28 @@ void LED_run1(void)
 			}
 		}
 }
+/*  FUNCTION <LED_run2>
+
+ ******************************************************************************
+ *  PURPOSE:                                                                  *
+ *    running LED 4 to 7 in a while loop executes yield on end of loop		  	* 
+ *    																																				*
+ *                                                                            *
+ ******************************************************************************
+ *  PARAMETER:                                                                *
+ *   frequency			                                                          *
+ *                                                                            *
+ ******************************************************************************
+ *  RETURN VALUE                                                              *
+ *      none                                                                  *
+ *                                                                            *
+ ******************************************************************************
+ *  CHANGE HISTORY:                                                           *
+ *   Revision   Date          Author      			Description                   *
+ *      0       01.11.2020    Andreas Vieracker creation                      *
+ *      1       16.11.2020    Dominik Müller    revision                      *
+ *                                                                            *
+ ******************************************************************************/
 void LED_run2(void)
 {
 	while(1)
@@ -415,12 +273,35 @@ void LED_run2(void)
 		}
 }
 
+/*  FUNCTION <LED_wait>
+
+ ******************************************************************************
+ *  PURPOSE:                                                                  *
+ *    wait until timmer hits expected time																  	* 
+ *    																																				*
+ *                                                                            *
+ ******************************************************************************
+ *  PARAMETER:                                                                *
+ *   frequency			                                                          *
+ *                                                                            *
+ ******************************************************************************
+ *  RETURN VALUE                                                              *
+ *      none                                                                  *
+ *                                                                            *
+ ******************************************************************************
+ *  CHANGE HISTORY:                                                           *
+ *   Revision   Date          Author      			Description                   *
+ *      0       01.11.2020    Andreas Vieracker creation                      *
+ *      1       16.11.2020    Dominik Müller    revision                      *
+ *                                                                            *
+ ******************************************************************************/
+
 void LED_wait(void)
 {
 	while(1)
 	{
 		LPC_TIM1->TC = 0;
-		//while (LPC_TIM1->TC < 500)
+		while (LPC_TIM1->TC < 500)
 		{
 		}
 		yield();

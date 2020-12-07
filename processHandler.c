@@ -24,6 +24,7 @@
  *     1.1    16.11.2020   Müller Dominik     changes     		            *
  *     1.2    17.11.2020   Andreas Vieracker  recomment                   *
  *		 2.0		30.11.2020   Andreas Vieracker 	rework											*
+ *     2.1    07.12.2020   Andreas Vieracker  revision                    *
  *                                                                        *
  *************************************************************************/
 
@@ -39,68 +40,11 @@
 
 /* ----------------- G L O B A L    V A R I A B L E S ------------------ */
 pcb_type processTable[NPROCS];
-uint8_t current_task_id = 0;
 uint32_t stack [NPROCS][32];
 
 
 /* ------------  F U N C T I O N   D E F I N I T I O N ----------------- */
 
-
-/*  FUNCTION <Sys_Init>
-
- ******************************************************************************
- *  PURPOSE:                                                                  *
- *    Initialization of all inital processes 															    *
- *                                                                            *
- ******************************************************************************
- *  PARAMETER:                                                                *
- *    none								                                                    *
- *                                                                            *
- ******************************************************************************
- *  RETURN VALUE                                                              *
- *      none                                                                  *
- *                                                                            *
- ******************************************************************************
- *  CHANGE HISTORY:                                                           *
- *   Revision   Date          Author      			Description                   *
- *      0       16.11.2020    Müller Dominik    creation                      *
- *                                                                            *
- ******************************************************************************/
-void Sys_Init()
-{
-	createProcess(&LED_process_init,ready); //hier alle Initialprozesse
-}
-
-/*  FUNCTION <Sys_Task_Scheduler>
-
- ******************************************************************************
- *  PURPOSE:                                                                  *
- *    Cycles through all tasks							 															    *
- *                                                                            *
- ******************************************************************************
- *  PARAMETER:                                                                *
- *  	none										                                                    *
- *                                                                            *
- ******************************************************************************
- *  RETURN VALUE                                                              *
- *      none                                                                  *
- *                                                                            *
- ******************************************************************************
- *  CHANGE HISTORY:                                                           *
- *   Revision   Date          Author      			Description                   *
- *      0       16.11.2020    Müller Dominik    creation                      *
- *                                                                            *
- ******************************************************************************/
-void Sys_Task_Scheduler(void)
-{
-	for (current_task_id = 0; current_task_id < NPROCS; current_task_id++)
-	{
-		if (processTable[current_task_id].pstatus == ready)
-		{
-			processTable[current_task_id].func();	
-		}
-	}
-}
 /*  FUNCTION <create Process>
 
  ******************************************************************************
@@ -119,6 +63,8 @@ void Sys_Task_Scheduler(void)
  *  CHANGE HISTORY:                                                           *
  *   Revision   Date          Author      			Description                   *
  *      0       16.11.2020    Müller Dominik    creation                      *
+ *      0       23.11.2020    Andreas Vieracker creation                      *
+ *      0       07.12.2020    Andreas Vieracker creation                      *
  *                                                                            *
  ******************************************************************************/
 
@@ -135,9 +81,7 @@ pid_t createProcess(void (*func)(void), uint8_t initstatus)
 		}
 	uintptr_t stackpointer = (uintptr_t)&(stack[processnumber][31])-9*4;
 	stack[processnumber][31] = (uintptr_t)func;
-	
-		
-		
+			
 	pcb_type process;
 	process.id = processnumber;
 	process.pstatus = initstatus;
@@ -165,36 +109,71 @@ pid_t createProcess(void (*func)(void), uint8_t initstatus)
  *  CHANGE HISTORY:                                                           *
  *   Revision   Date          Author      			Description                   *
  *      0       16.11.2020    Müller Dominik    creation                      *
+ *      1       16.11.2020    Andreas Vieracker revision                      *
  *                                                                            *
  ******************************************************************************/
 
 result_t destroyProcess(pid_t pid)
 {
 	processTable[pid].pstatus=unused;
-	processTable[pid].parameter1=0;
-	processTable[pid].parameter2=0;
 	processTable[pid].func=0;
 	processTable[pid].id=0xff;
+	processTable[pid].sp=0;
 	
 	
 	return 0;
 }
 
 
+/*  FUNCTION <yield>
+
+ ******************************************************************************
+ *  PURPOSE:                                                                  *
+ *   // Rücksprungadresse LR sichern																					*
+ *	 // Kontext von laufendem Prozess sichern																	*
+ *	 // nächsten Prozess auswählen																						*
+ *   // sich dem Kontext vom nächsten Prozess wiederherstellen								*
+ *   // nächsten Prozess fortsetzen									 													*
+ *                                                                            *
+ ******************************************************************************
+ *  PARAMETER:                                                                *
+ *  	ProcessID 																			                        *
+ *                                                                            *
+ ******************************************************************************
+ *  RETURN VALUE                                                              *
+ *    result		                                                              *
+ *                                                                            *
+ ******************************************************************************
+ *  CHANGE HISTORY:                                                           *
+ *   Revision   Date          Author      			Description                   *
+ *      0       23.11.2020    Andreas Vieracker creation                   		*
+ *      1       30.11.2020    Müller Dominik    revision                      *
+ *      2       07.12.2020    Andreas Vieracker revision                      *
+ *                                                                            *
+ ******************************************************************************/
 void yield (void)
 {
-// Rücksprungadresse LR sichern
-// Kontext von laufendem Prozess sichern
-// nächsten Prozess auswählen
-// sich dem Kontext vom nächsten Prozess wiederherstellen
-// nächsten Prozess fortsetzen
+
 	static int processcounter = 0;
-	//__return_address()
 	save_context(&processTable[processcounter].sp);
 	
-	processcounter++;
-	if (processcounter == NPROCS)
-		processcounter = 0;
+	
+	
+	for (int i = processcounter+1; i <= NPROCS; i++)
+		{
+			if (i == NPROCS)
+			{
+					processcounter= 0;
+					break;
+			}
+			
+			if (processTable[i].pstatus == ready)
+			{
+				processcounter=i;
+				break;
+			}
+		}
+
 
 	load_context(&processTable[processcounter].sp);
 		
@@ -207,6 +186,27 @@ void yield (void)
   //switch_context(&processTable[old_stack].sp, &processTable[new_stack].sp, lrReg);
 	
 }
+
+/*  FUNCTION <yield>
+
+ ******************************************************************************
+ *  PURPOSE:                                                                  *
+ *   // gets called if a hardfault occurs																			*
+ *                                                                            *
+ ******************************************************************************
+ *  PARAMETER:                                                                *
+ *  	ProcessID 																			                        *
+ *                                                                            *
+ ******************************************************************************
+ *  RETURN VALUE                                                              *
+ *    result		                                                              *
+ *                                                                            *
+ ******************************************************************************
+ *  CHANGE HISTORY:                                                           *
+ *   Revision   Date          Author      			Description                   *
+ *      0       30.11.2020    Müller Dominik    creation                      *
+ *                                                                            *
+ ******************************************************************************/
 
 void HardFault_Handler(void)
 {

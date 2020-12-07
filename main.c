@@ -40,10 +40,8 @@ extern pcb_type processTable[NPROCS];
 
 int main(void)
 {
-	//Sys_Init();
-	LED_init();
-	timer_init(TIMER0,3000);
-	timer_init(TIMER1,30000);
+		LED_init();
+	timer_init(TIMER1,30000); // 1 ms
 	
 	createProcess(&LED_run1, ready);
 	createProcess(&LED_wait, ready);
@@ -51,7 +49,6 @@ int main(void)
 	first_context(&processTable[0].sp);
 	while(1)
 	{
-		
 	}
 }
 

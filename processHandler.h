@@ -50,8 +50,6 @@ typedef struct {
 	pid_t id;
 	uint8_t pstatus;
 	void (*func)(void);
-	uint32_t parameter1;
-	uint32_t parameter2;
 	uintptr_t sp;
 	} pcb_type;
 
@@ -77,11 +75,8 @@ enum processStatus {
 /*  - P u b l i c  F u n c t i o n  P r o t o t y p e s                 */
 
 pid_t createProcess(void (*func)(void), uint8_t initstatus);
-void Sys_Init(void);
 result_t destroyProcess(pid_t pid);
-void Sys_Task_Scheduler(void);
 void yield (void);
-//extern void switch_context(uintptr_t *oldstack, uintptr_t *newstack, uint32_t lrReg);
 extern void save_context(uintptr_t *stack);
 extern void load_context(uintptr_t *stack);
 extern void first_context(uintptr_t *stack);
