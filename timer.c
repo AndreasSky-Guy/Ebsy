@@ -33,6 +33,7 @@
 #include <stdint.h>
 #include <LPC177x_8x.h>
 #include "timer.h"
+#include "LED.h"
 
 /* ----------------- G L O B A L    V A R I A B L E S ------------------ */
 
@@ -86,5 +87,29 @@ void timer_init(int timer, int prescaleValue)
 			break;
 		
 	}
+}
 
+void timer_systick_init(int prescaleValue)
+{
+	//NVIC_EnableIRQ(SysTick_IRQn);
+	SysTick->LOAD = (40000 *prescaleValue)-1;
+	SysTick->CTRL |= (1<<0);  //enable
+	SysTick->CTRL |= (1<<1);	//interrupt enable
+	SysTick->CTRL |= (1<<2);  //use internal clock
+	
+}
+
+void SysTick_Handler(void)
+{
+	static int status;
+	if(status == 0)
+	{
+		LED_on(LED0);
+		status =1;
+	}
+	else
+		{
+		LED_off(LED0);
+		status =0;
+	}
 }

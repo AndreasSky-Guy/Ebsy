@@ -1,6 +1,5 @@
-
- //////////////////////////////
- // SOURCE FILE  main.c       //
+//////////////////////////////
+ // SOURCE FILE  uart.c       //
  //////////////////////////////
 
 
@@ -9,19 +8,19 @@
  *                                                                        *
  **************************************************************************
  *  PROJECT       P1                                                      *
- *  MODULE        main.c                                                  *
+ *  MODULE        uart                                                   *
  *  REVISION      1.0                                                     *
  *  AUTHOR        Müller Dominik                                          *
  **************************************************************************
  *  PURPOSE:                                                              *
- *  main loop												 																			*
+ *  Various functions to control uart																			*
  *   						                                                          *
  *                                                                        *
  *                                                                        *
  **************************************************************************
  *  CHANGE HISTORY:                                                       *
  *   Revision  Date         Author            Description      					  *
- *     1.0    19.10.2020   Müller Dominik     creation                    *
+ *     1.0    14.12.2020   Müller Dominik     creation                    *
  *                                                                        *
  *************************************************************************/
 
@@ -29,27 +28,30 @@
 /* ---------------- G L O B A L   D E F I N I T I O N S ---------------- */
 
 /*  - I n c l u d e s                                                    */
+
 #include <stdint.h>
 #include <LPC177x_8x.h>
-#include "LED.h"
 #include "timer.h"
-#include "ProcessHandler.h"
+#include "LED.h"
+
+/* ----------------- G L O B A L    V A R I A B L E S ------------------ */
 
 
-extern pcb_type processTable[NPROCS];
 
-int main(void)
+/* ------------  F U N C T I O N   D E F I N I T I O N ----------------- */
+
+void uart_init(uint8_t uart, uint32_t baudrate)
 {
-	timer_systick_init(1);
-	LED_init();
-	timer_init(TIMER1,30000); // 1 ms
-	
-	//createProcess(&LED_run1, ready);
-	//createProcess(&LED_wait, ready);
-	//createProcess(&LED_run2, ready);
-	//first_context(&processTable[0].sp);
-	while(1)
-	{
-	}
 }
-
+void uart_open(uint8_t uart)
+{
+}
+void uart_close(uint8_t uart)
+{
+}
+void uart_read(uint8_t uart)
+{
+}
+void uart_write(uint8_t uart, uint32_t data)
+{
+}
