@@ -1,5 +1,5 @@
- //////////////////////////////
- // HEADER FILE  timer.h       //
+//////////////////////////////
+ // HEADER FILE  uart.h       //
  //////////////////////////////
 
 
@@ -7,7 +7,7 @@
  *  Eingebettete Betriebssysteme (EBSy)                                   *                                                                                                  *
  **************************************************************************
  *  PROJECT       P1                                                      *
- *  MODULE        timer                                                   *
+ *  MODULE        uart                                                   *
  *  REVISION      1.0                                                     *
  **************************************************************************
  *  PURPOSE:                                                              *
@@ -20,14 +20,14 @@
  **************************************************************************
  *  CHANGE HISTORY:                                                       *
  *   Revision  Date         Author      			Description                 *
- *     1.0    19.10.2020   Müller Dominik 		creation                    *
+ *     1.0    14.12.2020   Müller Dominik 		creation                    *
  *                                                                        *
  *                                                                        *
  *************************************************************************/
 
 
-#ifndef _TIMER_H
-   #define _TIMER_H
+#ifndef _UART_H
+   #define _UART_H
 
 // global type definitions
    #include <stdint.h>
@@ -45,10 +45,7 @@
 
 
 /*  - C o n s t a n t s                                                  */
-#define TIMER0 1
-#define TIMER1 2
-#define TIMER2 22
-#define TIMER3 23
+
 
 /*  - M a c r o s                                                        */
 
@@ -60,10 +57,12 @@
 
 /*  - P u b l i c  F u n c t i o n  P r o t o t y p e s                  */
 
-void timer_init(int timer, int prescaleValue);
-void timer_systick_init(int prescaleValue);
+void uart_open(uint8_t uart);
+void uart_close(uint8_t uart);
+void uart_read(uint8_t uart);
+void uart_write(uint8_t uart, uint32_t data);
 
-#endif  // _TIMER_
+#endif  // _UART_
 
 
 
