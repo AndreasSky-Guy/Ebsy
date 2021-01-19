@@ -61,7 +61,7 @@ enum processStatus {
 	unused,
 	running,
 	ready,
-	waiting,
+	waiting
 };
 
 /*  - M a c r o s                                                        */
