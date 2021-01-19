@@ -40,14 +40,16 @@ extern pcb_type processTable[NPROCS];
 
 int main(void)
 {
-	timer_systick_init(1);
+	
 	LED_init();
 	timer_init(TIMER1,30000); // 1 ms
 	
-	//createProcess(&LED_run1, ready);
+	createProcess(&LED_run1, ready);
 	//createProcess(&LED_wait, ready);
-	//createProcess(&LED_run2, ready);
+	createProcess(&LED_run2, ready);
 	//first_context(&processTable[0].sp);
+	timer_systick_init(1);								//enable system interrupt every 1ms
+	
 	while(1)
 	{
 	}

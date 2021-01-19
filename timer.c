@@ -101,15 +101,9 @@ void timer_systick_init(int prescaleValue)
 
 void SysTick_Handler(void)
 {
-	static int status;
-	if(status == 0)
-	{
-		LED_on(LED0);
-		status =1;
-	}
-	else
-		{
-		LED_off(LED0);
-		status =0;
-	}
+	SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk;
+	SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
+
 }
+
+
