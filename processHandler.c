@@ -156,9 +156,7 @@ void yield (void)
 
 	static int processcounter = 0;
 	save_context(&processTable[processcounter].sp);
-	
-	
-	
+
 	for (int i = processcounter+1; i <= NPROCS; i++)
 		{
 			if (i == NPROCS)
@@ -212,6 +210,37 @@ void HardFault_Handler(void)
 {
 	//kaputt
 	while(1);
+}
+
+void PendSV_Handler(void)
+{
+	//save min context
+	//set exc_return code in LR
+	//change execution mode?
+	//switch to new stack?
+	//retrieve new pc from vector table
+	
+	
+	SCB->ICSR |= SCB_ICSR_PENDSVCLR_Msk;
+	static int processcounter = 0;
+	save_context(&processTable[processcounter].sp);
+
+	for (int i = processcounter+1; i <= NPROCS; i++)
+		{
+			if (i == NPROCS)
+			{
+					processcounter= 0;
+					break;
+			}
+			
+			if (processTable[i].pstatus == ready)
+			{
+				processcounter=i;
+				break;
+			}
+		}
+	load_context(&processTable[processcounter].sp);
+		
 }
 
 
