@@ -41,6 +41,8 @@
 /* ----------------- G L O B A L    V A R I A B L E S ------------------ */
 pcb_type processTable[NPROCS];
 uint32_t stack [NPROCS][32];
+uintptr_t cur;
+uintptr_t nxt;
 
 
 /* ------------  F U N C T I O N   D E F I N I T I O N ----------------- */
@@ -79,7 +81,7 @@ pid_t createProcess(void (*func)(void), uint8_t initstatus)
 				break;							
 			}
 		}
-	uintptr_t stackpointer = (uintptr_t)&(stack[processnumber][31])-9*4;
+	uintptr_t stackpointer = (uintptr_t)&(stack[processnumber][31])-16*4;
 	stack[processnumber][31] = (uintptr_t)func;
 			
 	pcb_type process;
@@ -212,19 +214,52 @@ void HardFault_Handler(void)
 	while(1);
 }
 
-void PendSV_Handler(void)
-{
-	//save min context
-	//set exc_return code in LR
-	//change execution mode?
-	//switch to new stack?
-	//retrieve new pc from vector table
-	
-	
-	SCB->ICSR |= SCB_ICSR_PENDSVCLR_Msk;
-	static int processcounter = 0;
-	save_context(&processTable[processcounter].sp);
+//void PendSV_Handler(void)
+//{
+//	//save min context
+//	//set exc_return code in LR
+//	//change execution mode?
+//	//switch to new stack?
+//	//retrieve new pc from vector table
+//	
+//	
+//	SCB->ICSR |= SCB_ICSR_PENDSVCLR_Msk;
+//	static int processcounter = 0;
+//	
 
+//	for (int i = processcounter+1; i <= NPROCS; i++)
+//		{
+//			if (i == NPROCS)
+//			{
+//					processcounter= 0;
+//					break;
+//			}
+//			
+//			if (processTable[i].pstatus == ready)
+//			{
+//				processcounter=i;
+//				break;
+//			}
+//		}
+//}
+
+	//save_context(&processTable[processcounter].sp);
+	//load_context(&processTable[processcounter].sp);
+	
+void SysTick_Handler(void)
+{
+	
+	SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk;
+	SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
+	static int processcounter = 0;
+	static uint8_t f1context = 1;
+	if (f1context==1)
+	{
+		f1context = 0;
+		nxt=(uintptr_t)&processTable[0].sp;
+		first_context();
+	}
+	cur=(uintptr_t)&processTable[processcounter].sp;
 	for (int i = processcounter+1; i <= NPROCS; i++)
 		{
 			if (i == NPROCS)
@@ -238,11 +273,8 @@ void PendSV_Handler(void)
 				processcounter=i;
 				break;
 			}
+			
 		}
-	load_context(&processTable[processcounter].sp);
-		
+	nxt=(uintptr_t)&processTable[processcounter].sp;
 }
-
-
-
 

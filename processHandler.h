@@ -79,7 +79,7 @@ result_t destroyProcess(pid_t pid);
 void yield (void);
 extern void save_context(uintptr_t *stack);
 extern void load_context(uintptr_t *stack);
-extern void first_context(uintptr_t *stack);
+extern void first_context(void);
 void HardFault_Handler(void);
 
 

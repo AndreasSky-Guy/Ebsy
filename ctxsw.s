@@ -1,8 +1,12 @@
 	AREA CTXSW, CODE, READONLY
+	EXTERN cur
+	EXTERN nxt
 
     EXPORT first_context
 	EXPORT save_context
 	EXPORT load_context
+	EXPORT PendSV_Handler
+
 
 ;/*  FUNCTION <first_context>
 
@@ -27,21 +31,40 @@
 ; ******************************************************************************/
 
 first_context PROC
-				LDR sp, [r0]
-				POP {r8}
-				POP {r9}
-				POP {r10}
-				POP {r11}
-				POP {r12}
-				;POP {r8-r12}
-				POP {r4}
-				POP {r5}
-				POP {r6}
-				POP {r7}
-				;POP {r4-r7, pc}		
-				POP {lr}
-				STR sp, [r0] ;stackpointer gets saved to adress in r0
-				BX lr
+				;LDR sp, [r0]
+				;POP {r8}
+				;POP {r9}
+				;POP {r10}
+				;POP {r11}
+				;POP {r12}
+				;;POP {r8-r12}
+				;POP {r4}
+				;POP {r5}
+				;POP {r6}
+				;POP {r7}
+				;;POP {r4-r7, pc}		
+				;POP {lr}
+				;STR sp, [r0] ;stackpointer gets saved to adress in r0
+				;BX lr
+				
+				;LDR SP, =nxt
+				;POP {R4-R11}
+				;POP {R4}
+				;POP {R4}
+				;POP {R4}
+				;POP {R4}
+				;POP {R4}
+				;POP {R4}
+				;POP {R4}
+				;POP {R4}
+				;BX lr
+				LDR R0, =nxt
+				LDR R1, [R0]
+				MSR PSP, R1
+				LDMIA R1, {R4-R11}
+				;LDR LR, =0xFFFFFFFD
+				BX LR
+				
 				ENDP
 					
 ;/*  FUNCTION <save_context>
@@ -122,6 +145,21 @@ load_context PROC
 				BX lr
 				
 				ENDP
+					
+PendSV_Handler PROC
+	
+	LDR R3, =cur
+	MRS R0, PSP
+	STMDB R0!, {R4-R11}
+	MSR PSP, R0
+	LDR R3, [R3]
+	STR R0, [R3]
+	LDR R0, =nxt
+	LDR R1, [R0]
+	MSR PSP, R1
+	LDMIA R1, {R4-R11}
+	LDR LR, =0xFFFFFFFD
+	BX LR
+	ENDP
 
-			
     END

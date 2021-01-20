@@ -47,8 +47,9 @@ int main(void)
 	createProcess(&LED_run1, ready);
 	//createProcess(&LED_wait, ready);
 	createProcess(&LED_run2, ready);
-	//first_context(&processTable[0].sp);
-	timer_systick_init(1);								//enable system interrupt every 1ms
+	timer_systick_init(1);
+//	first_context(&processTable[0].sp);
+									//enable system interrupt every 1ms
 	
 	while(1)
 	{

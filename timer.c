@@ -99,11 +99,6 @@ void timer_systick_init(int prescaleValue)
 	
 }
 
-void SysTick_Handler(void)
-{
-	SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk;
-	SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 
-}
 
 

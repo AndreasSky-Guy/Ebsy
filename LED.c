@@ -212,7 +212,8 @@ void LED_off(uint8_t LED)
  ******************************************************************************/
 void LED_run1(void)
 {
-
+ while(1)
+ {
 		for (int i = 0; i<4; i++)
 			{
 				if (i != 0)
@@ -226,7 +227,7 @@ void LED_run1(void)
 					LED_off(LED3);
 				}
 			}
-
+		}
 }
 /*  FUNCTION <LED_run2>
 
@@ -252,7 +253,8 @@ void LED_run1(void)
  ******************************************************************************/
 void LED_run2(void)
 {
-
+	while(1)
+	{
 		for (int i = 0; i<4; i++)
 			{
 				if (i != 0)
@@ -267,7 +269,7 @@ void LED_run2(void)
 					LED_off(LED7);
 				}
 			}
-
+		}
 }
 
 /*  FUNCTION <LED_wait>
