@@ -81,7 +81,7 @@ pid_t createProcess(void (*func)(void), uint8_t initstatus)
 				break;							
 			}
 		}
-	uintptr_t stackpointer = (uintptr_t)&(stack[processnumber][31])-16*4;
+	uintptr_t stackpointer = (uintptr_t)&(stack[processnumber][31])-8*4;
 	stack[processnumber][31] = (uintptr_t)func;
 			
 	pcb_type process;

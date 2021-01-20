@@ -59,10 +59,12 @@ first_context PROC
 				;POP {R4}
 				;BX lr
 				LDR R0, =nxt
+				LDR R0, [R0]
 				LDR R1, [R0]
+				
+				LDMIA R1!, {R4-R11}
 				MSR PSP, R1
-				LDMIA R1, {R4-R11}
-				;LDR LR, =0xFFFFFFFD
+				LDR LR, =0xFFFFFFFD
 				BX LR
 				
 				ENDP
@@ -150,14 +152,17 @@ PendSV_Handler PROC
 	
 	LDR R3, =cur
 	MRS R0, PSP
+	LDR R11, =0xFF
 	STMDB R0!, {R4-R11}
-	MSR PSP, R0
+	;MSR PSP, R0
 	LDR R3, [R3]
 	STR R0, [R3]
 	LDR R0, =nxt
+	LDR R0, [R0] ; dereferenzieren
 	LDR R1, [R0]
-	MSR PSP, R1
+	
 	LDMIA R1, {R4-R11}
+	MSR PSP, R1
 	LDR LR, =0xFFFFFFFD
 	BX LR
 	ENDP

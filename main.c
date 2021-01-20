@@ -53,6 +53,8 @@ int main(void)
 	
 	while(1)
 	{
+		LED_wait();
+		
 	}
 }
 
