@@ -48,12 +48,15 @@ int main(void)
 	//createProcess(&LED_wait, ready);
 	createProcess(&LED_run2, ready);
 	timer_systick_init(1);
+	__ASM("SVC 0x32");
 //	first_context(&processTable[0].sp);
 									//enable system interrupt every 1ms
 	
 	while(1)
 	{
-		LED_wait();
+		//LED_wait();
+		int a;
+		a++;
 		
 	}
 }

@@ -6,6 +6,7 @@
 	EXPORT save_context
 	EXPORT load_context
 	EXPORT PendSV_Handler
+	EXPORT SVC_Handler
 
 
 ;/*  FUNCTION <first_context>
@@ -64,7 +65,7 @@ first_context PROC
 				
 				LDMIA R1!, {R4-R11}
 				MSR PSP, R1
-				LDR LR, =0xFFFFFFFD
+				;LDR LR, =0xFFFFFFFD
 				BX LR
 				
 				ENDP
@@ -150,21 +151,33 @@ load_context PROC
 					
 PendSV_Handler PROC
 	
-	LDR R3, =cur
-	MRS R0, PSP
-	LDR R11, =0xFF
-	STMDB R0!, {R4-R11}
-	;MSR PSP, R0
-	LDR R3, [R3]
-	STR R0, [R3]
-	LDR R0, =nxt
-	LDR R0, [R0] ; dereferenzieren
-	LDR R1, [R0]
-	
-	LDMIA R1, {R4-R11}
-	MSR PSP, R1
-	LDR LR, =0xFFFFFFFD
-	BX LR
-	ENDP
+				LDR R3, =cur
+				MRS R0, PSP
+				LDR R11, =0xFF
+				STMDB R0!, {R4-R11}
+				;MSR PSP, R0
+				LDR R3, [R3]
+				STR R0, [R3]
+				LDR R0, =nxt
+				LDR R0, [R0] ; dereferenzieren
+				LDR R1, [R0]
+				
+				LDMIA R1!, {R4-R11}
+				;LDR R1, =0x100000A4
+				MSR PSP, R1
+				BX LR
+				ENDP
 
-    END
+    
+
+SVC_Handler PROC
+				;LDR R1, =0x10000080				
+				;LDMIA R1!, {R4-R11}
+				MRS R1, MSP
+				MSR PSP, R1
+				ORR lr, lr, #4
+				BX LR
+				ENDP
+		
+	END		
+		

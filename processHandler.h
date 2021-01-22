@@ -81,6 +81,7 @@ extern void save_context(uintptr_t *stack);
 extern void load_context(uintptr_t *stack);
 extern void first_context(void);
 void HardFault_Handler(void);
+void SVC_Handler(void);
 
 
 #endif  //_PROCESSHANDLER_H
